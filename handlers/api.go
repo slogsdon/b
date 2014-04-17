@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/martini-contrib/render"
-	"github.com/slogsdon/b/db"
+	// "github.com/slogsdon/b/db"
 	"github.com/slogsdon/b/models"
 	"net/http"
 )
@@ -18,8 +18,8 @@ func (a Api) Index(r *http.Request, rw http.ResponseWriter) string {
 type apiPosts struct{}
 
 func (ap apiPosts) Index(r render.Render) {
-	var posts []models.Post
-	db.DB.Order("published_at").Find(&posts)
+	// db.DB.Order("published_at").Find(&posts)
+	posts := models.GetAllPosts()
 
 	r.JSON(200, posts)
 }
