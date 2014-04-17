@@ -4,14 +4,12 @@ import (
 	"github.com/go-martini/martini"
 	// "github.com/martini-contrib/gzip"
 	"github.com/martini-contrib/render"
-	// "github.com/slogsdon/b/db"
 	"github.com/slogsdon/b/handlers"
 )
 
 func main() {
 	// Set up our Martini instance
 	m := martini.Classic()
-	// m.Map(&db.DB)
 
 	// Middleware
 	// m.Use(gzip.All())
