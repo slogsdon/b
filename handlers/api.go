@@ -19,7 +19,7 @@ type apiPosts struct{}
 
 func (ap apiPosts) Index(r render.Render) {
 	// db.DB.Order("published_at").Find(&posts)
-	posts := models.GetAllPosts()
+	posts := models.GetAllPosts("./_posts")
 
 	r.JSON(200, posts)
 }

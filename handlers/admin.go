@@ -26,12 +26,18 @@ func (ap adminPosts) Edit(params martini.Params, r render.Render) {
 
 	root := "./_posts"
 	file := root + string(os.PathSeparator) + params["_1"]
+	found := false
 
-	for _, p := range models.GetAllPosts() {
+	for _, p := range models.GetAllPosts(root) {
 		if p.Directory+string(os.PathSeparator)+p.Filename == file {
 			post = p
+			found = true
 		}
 	}
 
-	r.HTML(200, "admin/posts/edit", post)
+	if found {
+		r.HTML(200, "admin/posts/edit", post)
+	} else {
+		r.Error(404)
+	}
 }
