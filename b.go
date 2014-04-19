@@ -1,13 +1,18 @@
-package main
+package b
 
 import (
 	"github.com/go-martini/martini"
 	// "github.com/martini-contrib/gzip"
 	"github.com/martini-contrib/render"
 	"github.com/slogsdon/b/handlers"
+	"github.com/slogsdon/b/util"
 )
 
-func main() {
+const (
+	VERSION = "0.0.1"
+)
+
+func Start() {
 	// Set up our Martini instance
 	m := martini.Classic()
 
@@ -35,6 +40,6 @@ func main() {
 	})
 
 	// Serve from static if possible
-	m.Use(martini.Static("_site"))
+	m.Use(martini.Static(util.Config().App.SiteDir))
 	m.Run()
 }

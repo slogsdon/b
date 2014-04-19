@@ -21,4 +21,8 @@ _testmain.go
 
 *.exe
 
+# Using gin for auto-building after changes
 gin-bin
+
+# Using Guard for auto-running tests
+Gemfile.lock
