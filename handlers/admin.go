@@ -4,6 +4,7 @@ import (
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"github.com/slogsdon/b/models"
+	"github.com/slogsdon/b/util"
 	"os"
 )
 
@@ -24,7 +25,7 @@ func (ap adminPosts) Index(r render.Render) {
 func (ap adminPosts) Edit(params martini.Params, r render.Render) {
 	var post models.Post
 
-	root := "./_posts"
+	root := util.Config().App.PostsDir
 	file := root + string(os.PathSeparator) + params["_1"]
 	found := false
 
