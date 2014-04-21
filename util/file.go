@@ -1,6 +1,7 @@
 package util
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 )
@@ -35,11 +36,11 @@ func WriteFile(name string, contents interface{}) error {
 
 	switch contents.(type) {
 	default:
-		panic("unexpected type when writing a file")
+		return errors.New("unexpected type when writing a file")
 	case string:
 		c = []byte(contents.(string))
 	case []byte:
-		c = contents.([]byte)
+		c = []byte(contents.([]byte))
 	}
 
 	return ioutil.WriteFile(name, c, 0755)

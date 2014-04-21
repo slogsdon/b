@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"github.com/BurntSushi/toml"
 	"io/ioutil"
 	"strings"
@@ -43,8 +42,12 @@ func DefaultConfig() config {
 
 func readConfig() {
 	blob, err := ioutil.ReadFile(ConfigPath)
-	if _, err = toml.Decode(string(blob), &conf); err != nil {
-		fmt.Println(err)
+	if err != nil {
+		conf = DefaultConfig()
+	}
+
+	_, err = toml.Decode(string(blob), &conf)
+	if err != nil {
 		conf = DefaultConfig()
 	}
 	conf.App.PostsDir = strings.TrimRight(conf.App.PostsDir, "/")

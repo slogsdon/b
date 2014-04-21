@@ -41,7 +41,7 @@ func BenchmarkReadDir(b *testing.B) {
 	}
 }
 
-func TestWriteFile(t *testing.T) {
+func TestWriteFile_string(t *testing.T) {
 	name := "../fixtures/test-make-file.txt"
 	contents := "test file contents"
 
@@ -53,6 +53,33 @@ func TestWriteFile(t *testing.T) {
 	readContents, err := ioutil.ReadFile(name)
 	expect(t, string(readContents), contents)
 	expect(t, err, nil)
+
+	os.Remove(name)
+}
+
+func TestWriteFile_byteSlice(t *testing.T) {
+	name := "../fixtures/test-make-file.txt"
+	contents := []byte("test file contents")
+
+	// Can write to file
+	err := WriteFile(name, contents)
+	expect(t, err, nil)
+
+	// Can read contents
+	readContents, err := ioutil.ReadFile(name)
+	expect(t, string(readContents), string(contents))
+	expect(t, err, nil)
+
+	os.Remove(name)
+}
+
+func TestWriteFile_int(t *testing.T) {
+	name := "../fixtures/test-make-file.txt"
+	contents := 1
+
+	// Can write to file
+	err := WriteFile(name, contents)
+	refute(t, err, nil)
 
 	os.Remove(name)
 }

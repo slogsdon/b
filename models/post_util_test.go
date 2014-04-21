@@ -3,7 +3,6 @@ package models
 import (
 	"github.com/slogsdon/b/util"
 	"io/ioutil"
-	"reflect"
 	"testing"
 )
 
@@ -46,15 +45,9 @@ func TestGetAllPosts(t *testing.T) {
 	expect(t, post.Slug, "test-post-1")
 }
 
-/* Test Helpers */
-func expect(t *testing.T, a interface{}, b interface{}) {
-	if a != b {
-		t.Errorf("Expected %v (type %v) - Got %v (type %v)", b, reflect.TypeOf(b), a, reflect.TypeOf(a))
-	}
-}
+func TestGetPost(t *testing.T) {
+	post := GetPost("../fixtures/posts/2014-04-16-test-post-1.md", "../fixtures/posts")
 
-func refute(t *testing.T, a interface{}, b interface{}) {
-	if a == b {
-		t.Errorf("Did not expect %v (type %v) - Got %v (type %v)", b, reflect.TypeOf(b), a, reflect.TypeOf(a))
-	}
+	expect(t, post.Title, "Test Post 1")
+	expect(t, post.Slug, "test-post-1")
 }

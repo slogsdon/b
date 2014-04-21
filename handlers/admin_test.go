@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"github.com/go-martini/martini"
+	"github.com/martini-contrib/render"
+	"github.com/slogsdon/b/util"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -10,7 +12,11 @@ import (
 func TestAdminIndex(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	m := martini.Classic()
-	m.Get("/admin", Api{}.Index)
+	m.Use(render.Renderer(render.Options{
+		Directory: "../fixtures/templates",
+		Layout:    "admin/layout",
+	}))
+	m.Get("/admin", Admin{}.Index)
 
 	r, err := http.NewRequest("GET", "/admin", nil)
 	m.ServeHTTP(recorder, r)
@@ -22,7 +28,12 @@ func TestAdminIndex(t *testing.T) {
 func TestAdminPostsIndex(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	m := martini.Classic()
-	m.Get("/admin/posts", Api{}.Index)
+	util.ConfigPath = "../fixtures/config/app.config"
+	m.Use(render.Renderer(render.Options{
+		Directory: "../fixtures/templates",
+		Layout:    "admin/layout",
+	}))
+	m.Get("/admin/posts", Admin{}.Posts.Index)
 
 	r, err := http.NewRequest("GET", "/admin/posts", nil)
 	m.ServeHTTP(recorder, r)
@@ -34,7 +45,12 @@ func TestAdminPostsIndex(t *testing.T) {
 func TestAdminPostsEdit(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	m := martini.Classic()
-	m.Get("/admin/posts/edit/2014-04-16-test-post-1.md", Api{}.Index)
+	util.ConfigPath = "../fixtures/config/app.config"
+	m.Use(render.Renderer(render.Options{
+		Directory: "../fixtures/templates",
+		Layout:    "admin/layout",
+	}))
+	m.Get("/admin/posts/edit/**", Admin{}.Posts.Edit)
 
 	r, err := http.NewRequest("GET", "/admin/posts/edit/2014-04-16-test-post-1.md", nil)
 	m.ServeHTTP(recorder, r)

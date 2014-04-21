@@ -26,3 +26,6 @@ gin-bin
 
 # Using Guard for auto-running tests
 Gemfile.lock
+
+# wercker command line tool
+.wercker
