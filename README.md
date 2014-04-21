@@ -1,4 +1,4 @@
-# b [![Build Status](https://travis-ci.org/slogsdon/b.svg)](https://travis-ci.org/slogsdon/b) [![GoDoc](https://godoc.org/github.com/slogsdon/b?status.png)](http://godoc.org/github.com/slogsdon/b) [![Coverage Status](https://coveralls.io/repos/slogsdon/b/badge.png?branch=master)](https://coveralls.io/r/slogsdon/b?branch=master)
+# b [![GoDoc](https://godoc.org/github.com/slogsdon/b?status.png)](http://godoc.org/github.com/slogsdon/b) [![Build Status](https://travis-ci.org/slogsdon/b.svg)](https://travis-ci.org/slogsdon/b) [![Coverage Status](https://coveralls.io/repos/slogsdon/b/badge.png?branch=master)](https://coveralls.io/r/slogsdon/b?branch=master)
 
 A static-ish blog application. Can be run as a standalone application/server or be used to locally manage and deploy posts to a remote server.
 
