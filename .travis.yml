@@ -1,0 +1,13 @@
+language: go
+
+go:
+  - 1.2
+
+env:
+  - COVERALLS_TOKEN=N06ew0JWMaLUsHpKtoBMZVDoMzxH8Hxi2
+
+before_script:
+  - go get code.google.com/p/go.tools/cmd/cover
+
+script:
+  - bash test-coverage.sh
