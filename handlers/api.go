@@ -9,23 +9,23 @@ import (
 )
 
 type Api struct {
-	Posts apiPosts
+	Posts ApiPosts
 }
 
 func (a Api) Index(r *http.Request, rw http.ResponseWriter) string {
 	return "hello"
 }
 
-type apiPosts struct{}
+type ApiPosts struct{}
 
-func (ap apiPosts) Index(r render.Render) {
+func (ap ApiPosts) Index(r render.Render) {
 	root := util.Config().App.PostsDir
 	posts := models.GetAllPosts(root)
 
 	r.JSON(200, posts)
 }
 
-func (ap apiPosts) Create(r render.Render, req *http.Request) {
+func (ap ApiPosts) Create(r render.Render, req *http.Request) {
 	var (
 		filename   string
 		raw        string

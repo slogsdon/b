@@ -9,20 +9,20 @@ import (
 )
 
 type Admin struct {
-	Posts adminPosts
+	Posts AdminPosts
 }
 
 func (a Admin) Index(r render.Render) {
 	r.HTML(200, "admin/index", "")
 }
 
-type adminPosts struct{}
+type AdminPosts struct{}
 
-func (ap adminPosts) Index(r render.Render) {
+func (ap AdminPosts) Index(r render.Render) {
 	r.HTML(200, "admin/posts/index", "")
 }
 
-func (ap adminPosts) Edit(params martini.Params, r render.Render) {
+func (ap AdminPosts) Edit(params martini.Params, r render.Render) {
 	var post models.Post
 
 	root := util.Config().App.PostsDir

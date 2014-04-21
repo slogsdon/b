@@ -20,11 +20,25 @@ func TestMakeDir(t *testing.T) {
 	os.Remove(name)
 }
 
+func BenchmarkMakeDir(b *testing.B) {
+	name := "../fixtures/test-make-dir"
+	for i := 0; i < b.N; i++ {
+		_ = MakeDir(name)
+	}
+	os.Remove(name)
+}
+
 func TestReadDir(t *testing.T) {
 	files := ReadDir("../fixtures/posts")
 
 	expect(t, len(files) > 0, true)
 	expect(t, files[0].Info.Name(), "2014-04-16-test-post-1.md")
+}
+
+func BenchmarkReadDir(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = ReadDir("../fixtures/posts")
+	}
 }
 
 func TestWriteFile(t *testing.T) {
@@ -40,5 +54,14 @@ func TestWriteFile(t *testing.T) {
 	expect(t, string(readContents), contents)
 	expect(t, err, nil)
 
+	os.Remove(name)
+}
+
+func BenchmarkWriteFile(b *testing.B) {
+	name := "../fixtures/test-make-file.txt"
+	contents := "test file contents"
+	for i := 0; i < b.N; i++ {
+		_ = WriteFile(name, contents+string(i))
+	}
 	os.Remove(name)
 }
