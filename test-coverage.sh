@@ -33,7 +33,7 @@ do
 done
 if [ -n "$COVERALLS_TOKEN" ]
 then
-  goveralls -service drone.io -repotoken $COVERALLS_TOKEN -coverprofile=acc.out
+  goveralls -service=travis-ci -repotoken $COVERALLS_TOKEN -coverprofile=acc.out
 fi  
 
 rm -rf ./profile.out
