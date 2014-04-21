@@ -8,6 +8,8 @@ env:
 
 before_script:
   - go get code.google.com/p/go.tools/cmd/cover
+  - go get github.com/axw/gocov/gocov
+  - go get github.com/mattn/goveralls
 
 script:
   - bash test-coverage.sh
