@@ -1,4 +1,4 @@
-# b [![wercker status](https://app.wercker.com/status/eaa45a2252df7c1535fddd9cced59e91/s/ "wercker status")](https://app.wercker.com/project/bykey/eaa45a2252df7c1535fddd9cced59e91) [![GoDoc](https://godoc.org/github.com/slogsdon/b?status.png)](http://godoc.org/github.com/slogsdon/b)
+# b [![wercker status](https://app.wercker.com/status/eaa45a2252df7c1535fddd9cced59e91/s/ "wercker status")](https://app.wercker.com/project/bykey/eaa45a2252df7c1535fddd9cced59e91) [![GoDoc](https://godoc.org/github.com/slogsdon/b?status.png)](http://godoc.org/github.com/slogsdon/b) [![Coverage Status](https://coveralls.io/repos/slogsdon/b/badge.png?branch=master)](https://coveralls.io/r/slogsdon/b?branch=master)
 
 A static-ish blog application. Can be run as a standalone application/server or be used to locally manage and deploy posts to a remote server.
 
