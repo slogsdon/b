@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// GetAllPosts returns all posts from the storage system by name.
 func GetAllPosts(root string) []Post {
 	var posts []Post
 
@@ -20,6 +21,21 @@ func GetAllPosts(root string) []Post {
 	return posts
 }
 
+// GetPost returns a single post from the storage system by name.
+func GetPost(name, root string) Post {
+	var post Post
+
+	for _, f := range util.ReadDir(root) {
+		if f.Filename == name {
+			post = preparePost(f)
+			break
+		}
+	}
+
+	return post
+}
+
+// ParsePostContent parses the HeadMatter and HTML from a raw post.
 func ParsePostContent(contents []byte, t string) (HeadMatter, template.HTML) {
 	m, c := parseHeadMatter(contents)
 
@@ -31,6 +47,11 @@ func ParsePostContent(contents []byte, t string) (HeadMatter, template.HTML) {
 	return m, template.HTML(string(c))
 }
 
+// ParsePostSlugAndType parses a post's slug and type from
+// its filename. The file extension is used for the post type.
+// The slug is grabbed from the basename sans a prefixed date
+// used for organization.
+// It returns the post's slug and type.
 func ParsePostSlugAndType(filename string) (string, string) {
 	filenameNoDate := strings.Join(strings.Split(filename, "-")[3:], "-")
 	split := strings.Split(filenameNoDate, ".")
@@ -64,6 +85,9 @@ func preparePost(f util.FileReading) Post {
 	}
 }
 
+// Represents the possible data contained within the
+// head matter section of a post, fenced with leading
+// and following --- lines.
 type HeadMatter struct {
 	Title      string   `json:"title"`
 	Date       string   `json:"date"`

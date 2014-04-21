@@ -1,3 +1,7 @@
+// B is a static-ish blog application. Can be run
+// as a standalone application/server or be used
+// to locally manage and deploy posts to a remote
+// server.
 package b
 
 import (
@@ -9,9 +13,13 @@ import (
 )
 
 const (
+	// Current application version.
 	VERSION = "0.0.1"
 )
 
+// Entry point for running the application.
+// It defines all routes and middleware used
+// and starts the underlying server.
 func Start() {
 	// Set up our Martini instance
 	m := martini.Classic()
@@ -37,6 +45,7 @@ func Start() {
 
 		r.Get("", a.Index)
 		r.Get("/posts", a.Posts.Index)
+		r.Post("/posts", a.Posts.Create)
 	})
 
 	// Serve from static if possible

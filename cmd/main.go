@@ -1,3 +1,4 @@
+// Command line utility for b.
 package main
 
 import (

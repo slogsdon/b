@@ -16,7 +16,7 @@ type Post struct {
 	UpdatedAt   time.Time     `json:"updated_at"`
 	PublishedAt time.Time     `json:"published_at"`
 	HeadMatter  HeadMatter    `json:"head_matter"`
-	Filename    string        `json:"-"`
-	Directory   string        `json:"-"`
-	Type        string        `json:"-"`
+	Filename    string        `json:"filename"`
+	Directory   string        `json:"directory"`
+	Type        string        `json:"type"`
 }

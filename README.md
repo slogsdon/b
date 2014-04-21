@@ -1,6 +1,6 @@
-# b [![wercker status](https://app.wercker.com/status/eaa45a2252df7c1535fddd9cced59e91/s/ "wercker status")](https://app.wercker.com/project/bykey/eaa45a2252df7c1535fddd9cced59e91)
+# b [![wercker status](https://app.wercker.com/status/eaa45a2252df7c1535fddd9cced59e91/s/ "wercker status")](https://app.wercker.com/project/bykey/eaa45a2252df7c1535fddd9cced59e91) [![GoDoc](https://godoc.org/github.com/slogsdon/b?status.png)](http://godoc.org/github.com/slogsdon/b)
 
-A static-ish blog application. Can be run as a standalone application/server or be used to manage and deploy posts to a remote server.
+A static-ish blog application. Can be run as a standalone application/server or be used to locally manage and deploy posts to a remote server.
 
 ## Building
 
@@ -21,8 +21,9 @@ If you wish to run the tests, either run them using `go test ./...` in the proje
 - Create new posts
 - Edit posts
 - Admin interface
-- Some form of authentication (?)
 - Generation of static files
+- Automated revisioning with git
+- Some form of authentication (?)
 - Deployment
     + S3
     + SSH
