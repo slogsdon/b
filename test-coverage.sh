@@ -2,13 +2,13 @@
 
 echo "mode: set" > acc.out
 
-returnval=`gocov test github.com/slogsdon/b | gocov report`
+returnval=`go test -coverprofile=profile.out github.com/slogsdon/b`
 echo ${returnval}
 if [[ ${returnval} != *FAIL* ]]
 then
-  if [ -f coverage.json ]
+  if [ -f profile.out ]
   then
-      cat coverage.json | grep -v "mode: set" >> acc.out 
+      cat profile.out | grep -v "mode: set" >> acc.out 
   fi
 else
   exit 1
@@ -18,13 +18,13 @@ for Dir in $(find ./* -maxdepth 10 -type d );
 do
   if ls $Dir/*.go &> /dev/null;
   then
-    returnval=`gocov test github.com/slogsdon/b/$Dir | gocov report`
+    returnval=`go test -coverprofile=profile.out github.com/slogsdon/b/$Dir`
     echo ${returnval}
     if [[ ${returnval} != *FAIL* ]]
     then
-        if [ -f coverage.json ]
+        if [ -f profile.out ]
         then
-            cat coverage.json | grep -v "mode: set" >> acc.out 
+            cat profile.out | grep -v "mode: set" >> acc.out 
         fi
       else
         exit 1
@@ -36,5 +36,5 @@ then
   goveralls -service drone.io -repotoken $COVERALLS_TOKEN -coverprofile=acc.out
 fi  
 
-rm -rf ./coverage.json
+rm -rf ./profile.out
 rm -rf ./acc.out
