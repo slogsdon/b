@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// SavePost writes a new file or a file's new contents to storage.
 func SavePost(root string, form map[string][]string) error {
 	filename := form["filename"][0]
 	raw := form["raw"][0]

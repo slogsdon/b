@@ -12,16 +12,19 @@ type Admin struct {
 	Posts AdminPosts
 }
 
+// Index returns the admin dashboard.
 func (a Admin) Index(r render.Render) {
 	r.HTML(200, "admin/index", "")
 }
 
 type AdminPosts struct{}
 
+// Index lists all posts.
 func (ap AdminPosts) Index(r render.Render) {
 	r.HTML(200, "admin/posts/index", "")
 }
 
+// Edit loads a post for editing.
 func (ap AdminPosts) Edit(params martini.Params, r render.Render) {
 	var post models.Post
 

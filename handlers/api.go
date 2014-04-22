@@ -12,12 +12,14 @@ type Api struct {
 	Posts ApiPosts
 }
 
+// Index returns the api's index.
 func (a Api) Index(r *http.Request, rw http.ResponseWriter) string {
 	return "hello"
 }
 
 type ApiPosts struct{}
 
+// Index returns all available posts.
 func (ap ApiPosts) Index(r render.Render) {
 	root := util.Config().App.PostsDir
 	posts := models.GetAllPosts(root)
@@ -25,6 +27,8 @@ func (ap ApiPosts) Index(r render.Render) {
 	r.JSON(200, posts)
 }
 
+// Create allows for the creation of new posts. It returns a 204
+// response on creation or a 500 response on error.
 func (ap ApiPosts) Create(r render.Render, req *http.Request) {
 	root := util.Config().App.PostsDir
 
