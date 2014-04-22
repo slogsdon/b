@@ -38,22 +38,6 @@ func TestSavePost_badTargetDir(t *testing.T) {
 	refute(t, err, nil)
 }
 
-func TestSavePost_badWrite(t *testing.T) {
-	root := "../fixtures/posts"
-	form := map[string][]string{
-		"filename": {
-			"2014-04-16-wrong-permissions.md",
-		},
-		"raw": {
-			"testing.",
-		},
-	}
-
-	err := SavePost(root, form)
-
-	refute(t, err, nil)
-}
-
 func TestParsePostSlugAndType(t *testing.T) {
 	files := util.ReadDir("../fixtures/posts")
 	file := files[0]
