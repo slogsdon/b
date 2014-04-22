@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"github.com/slogsdon/b/models"
@@ -11,7 +10,8 @@ import (
 )
 
 type Api struct {
-	Posts ApiPosts
+	Posts  ApiPosts
+	Render ApiRender
 }
 
 // Index returns the api's index.
@@ -36,13 +36,10 @@ func (ap ApiPosts) Create(r render.Render, req *http.Request) {
 
 	if err := req.ParseForm(); err != nil {
 		r.Data(500, []byte(err.Error()))
+		return
 	}
 
-	fmt.Println(root)
-	fmt.Println(req.Form)
-
 	if err := models.SavePost(root, req.Form); err == nil {
-		fmt.Println(err)
 		r.Data(204, []byte("Created"))
 	} else {
 		r.Data(500, []byte(err.Error()))
@@ -69,4 +66,28 @@ func (ap ApiPosts) Show(params martini.Params, r render.Render) {
 	} else {
 		r.Error(404)
 	}
+}
+
+type ApiRender struct{}
+
+// Markdown renders a POST request into HTML.
+func (ap ApiRender) Markdown(r render.Render, req *http.Request) {
+	if err := req.ParseForm(); err != nil {
+		r.Data(500, []byte(err.Error()))
+		return
+	}
+
+	if _, ok := req.Form["raw"]; !ok {
+		r.Data(500, []byte("No Data"))
+		return
+	}
+
+	raw := req.Form["raw"][0]
+	data := util.Markdown([]byte(raw))
+
+	r.JSON(200, apiRenderResponse{Data: string(data)})
+}
+
+type apiRenderResponse struct {
+	Data string `json:"data"`
 }

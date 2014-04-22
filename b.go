@@ -48,6 +48,7 @@ func Start() {
 		r.Get("/posts", a.Posts.Index)
 		r.Post("/posts", a.Posts.Create)
 		r.Get("/posts/**", a.Posts.Show)
+		r.Get("/render/markdown", a.Render.Markdown)
 	})
 
 	// Serve from static if possible

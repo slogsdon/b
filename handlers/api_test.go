@@ -121,3 +121,48 @@ func TestApiPostsShow_fileNotExists(t *testing.T) {
 	expect(t, err, nil)
 	expect(t, recorder.Code, 404)
 }
+
+func TestApiRenderMarkdown_goodData(t *testing.T) {
+	recorder := httptest.NewRecorder()
+	m := martini.Classic()
+	m.Use(render.Renderer())
+	m.Post("/api/render/markdown", Api{}.Render.Markdown)
+	buf := bytes.NewBufferString("raw=## title")
+
+	r, err := http.NewRequest("POST", "/api/render/markdown", buf)
+	r.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+	m.ServeHTTP(recorder, r)
+
+	expect(t, err, nil)
+	expect(t, recorder.Code, 200)
+	expect(t, recorder.Body.String(), `{"data":"\u003ch2\u003etitle\u003c/h2\u003e\n"}`)
+}
+
+func TestApiRenderMarkdown_badRequest(t *testing.T) {
+	recorder := httptest.NewRecorder()
+	m := martini.Classic()
+	m.Use(render.Renderer())
+	m.Post("/api/render/markdown", Api{}.Render.Markdown)
+
+	r, err := http.NewRequest("POST", "/api/render/markdown", nil)
+	r.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+	m.ServeHTTP(recorder, r)
+
+	expect(t, err, nil)
+	expect(t, recorder.Code, 500)
+}
+
+func TestApiRenderMarkdown_noData(t *testing.T) {
+	recorder := httptest.NewRecorder()
+	m := martini.Classic()
+	m.Use(render.Renderer())
+	m.Post("/api/render/markdown", Api{}.Render.Markdown)
+	buf := bytes.NewBufferString("")
+
+	r, err := http.NewRequest("POST", "/api/render/markdown", buf)
+	r.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+	m.ServeHTTP(recorder, r)
+
+	expect(t, err, nil)
+	expect(t, recorder.Code, 500)
+}

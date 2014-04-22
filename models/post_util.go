@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/russross/blackfriday"
 	"github.com/slogsdon/b/util"
 	"gopkg.in/yaml.v1"
 	"html/template"
@@ -13,8 +12,16 @@ import (
 
 // SavePost writes a new file or a file's new contents to storage.
 func SavePost(root string, form map[string][]string) error {
-	filename := form["filename"][0]
-	raw := form["raw"][0]
+	var (
+		filename string
+		raw      string
+	)
+	if _, ok := form["filename"]; ok {
+		filename = form["filename"][0]
+	}
+	if _, ok := form["raw"]; ok {
+		raw = form["raw"][0]
+	}
 	hm, _ := ParsePostContent([]byte(raw), "md")
 	categories := strings.Join(hm.Categories, string(os.PathSeparator)) + string(os.PathSeparator)
 
@@ -58,7 +65,7 @@ func ParsePostContent(contents []byte, t string) (HeadMatter, template.HTML) {
 
 	switch t {
 	case "md", "mdown", "markdown":
-		c = markdown(c)
+		c = util.Markdown(c)
 	}
 
 	return m, template.HTML(string(c))
@@ -122,27 +129,4 @@ func parseHeadMatter(contents []byte) (HeadMatter, []byte) {
 	}
 
 	return m, []byte(c)
-}
-
-func markdown(str []byte) []byte {
-	// this did use blackfriday.MarkdownCommon, but it was stripping out <script>
-
-	htmlFlags := 0
-	htmlFlags |= blackfriday.HTML_USE_XHTML
-	htmlFlags |= blackfriday.HTML_USE_SMARTYPANTS
-	htmlFlags |= blackfriday.HTML_SMARTYPANTS_FRACTIONS
-	htmlFlags |= blackfriday.HTML_SMARTYPANTS_LATEX_DASHES
-	renderer := blackfriday.HtmlRenderer(htmlFlags, "", "")
-
-	// set up the parser
-	extensions := 0
-	extensions |= blackfriday.EXTENSION_NO_INTRA_EMPHASIS
-	extensions |= blackfriday.EXTENSION_TABLES
-	extensions |= blackfriday.EXTENSION_FENCED_CODE
-	extensions |= blackfriday.EXTENSION_AUTOLINK
-	extensions |= blackfriday.EXTENSION_STRIKETHROUGH
-	extensions |= blackfriday.EXTENSION_SPACE_HEADERS
-	extensions |= blackfriday.EXTENSION_FOOTNOTES
-
-	return blackfriday.Markdown(str, renderer, extensions)
 }
