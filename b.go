@@ -34,6 +34,7 @@ func Start() {
 
 		r.Get("", a.Index)
 		r.Get("/posts", a.Posts.Index)
+		r.Get("/posts/new", a.Posts.New)
 		r.Get("/posts/edit/**", a.Posts.Edit)
 
 	}, render.Renderer(render.Options{

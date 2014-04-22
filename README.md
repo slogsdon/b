@@ -19,7 +19,7 @@ If you wish to run the tests, either run them using `go test ./...` in the proje
 ## TODO
 
 - Create new posts - 50% (api endpoint complete)
-- Edit posts
+- Edit posts - 75% (api endpoints [show, update] and admin endpoint [edit] complete)
 - Admin interface
 - Generation of static files
 - Automated revisioning with git

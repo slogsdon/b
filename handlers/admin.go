@@ -24,6 +24,11 @@ func (ap AdminPosts) Index(r render.Render) {
 	r.HTML(200, "admin/posts/index", "")
 }
 
+// New allows for adding new posts.
+func (ap AdminPosts) New(r render.Render) {
+	r.HTML(200, "admin/posts/new", "")
+}
+
 // Edit loads a post for editing.
 func (ap AdminPosts) Edit(params martini.Params, r render.Render) {
 	var post models.Post
