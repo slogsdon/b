@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/martini-contrib/render"
 	"github.com/slogsdon/b/models"
 	"github.com/slogsdon/b/util"
@@ -31,9 +32,13 @@ func (ap ApiPosts) Create(r render.Render, req *http.Request) {
 		panic(err)
 	}
 
+	fmt.Println(root)
+	fmt.Println(req.Form)
+
 	if err := models.SavePost(root, req.Form); err == nil {
+		fmt.Println(err)
 		r.Data(204, []byte("Created"))
 	} else {
-		r.Data(500, []byte(""))
+		r.Data(500, []byte(err.Error()))
 	}
 }

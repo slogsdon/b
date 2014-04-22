@@ -35,7 +35,7 @@ func TestApiPostsIndex(t *testing.T) {
 	expect(t, recorder.Code, 200)
 }
 
-func TestApiPostsCreate(t *testing.T) {
+func TestApiPostsCreate_goodRequest(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	m := martini.Classic()
 	m.Use(render.Renderer())
@@ -57,4 +57,23 @@ func TestApiPostsCreate(t *testing.T) {
 		os.Remove("../fixtures/posts/test/2014-04-16-test-post-3.md")
 	}
 	os.Remove("../fixtures/posts/test")
+}
+
+func TestApiPostsCreate_badRequest(t *testing.T) {
+	recorder := httptest.NewRecorder()
+	m := martini.Classic()
+	m.Use(render.Renderer())
+	m.Post("/api/posts", Api{}.Posts.Create)
+	buf := bytes.NewBufferString("filename=&2014-04-16-test-post-3.md&raw=testing.")
+
+	r, err := http.NewRequest("POST", "/api/posts", buf)
+	r.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+	m.ServeHTTP(recorder, r)
+
+	expect(t, err, nil)
+	expect(t, recorder.Code, 500)
+
+	_, err = os.Stat("../fixtures/posts/&2014-04-16-test-post-3.md")
+
+	refute(t, err, nil)
 }
