@@ -10,6 +10,21 @@ import (
 	"time"
 )
 
+func SavePost(root string, form map[string][]string) error {
+	filename := form["filename"][0]
+	raw := form["raw"][0]
+	hm, _ := ParsePostContent([]byte(raw), "md")
+	categories := strings.Join(hm.Categories, "/") + "/"
+
+	err := util.MakeDir(root + "/" + categories)
+	if err != nil {
+		return err
+	}
+
+	fullpath := root + "/" + categories + filename
+	return util.WriteFile(fullpath, raw)
+}
+
 // GetAllPosts returns all posts from the storage system by name.
 func GetAllPosts(root string) []Post {
 	var posts []Post
