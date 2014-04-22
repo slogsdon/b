@@ -33,7 +33,7 @@ func (ap ApiPosts) Create(r render.Render, req *http.Request) {
 	root := util.Config().App.PostsDir
 
 	if err := req.ParseForm(); err != nil {
-		panic(err)
+		r.Data(500, []byte(err.Error()))
 	}
 
 	fmt.Println(root)
