@@ -42,7 +42,7 @@ func TestAdminPostsIndex(t *testing.T) {
 	expect(t, recorder.Code, 200)
 }
 
-func TestAdminPostsEdit(t *testing.T) {
+func TestAdminPostsEdit_fileExists(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	m := martini.Classic()
 	util.ConfigPath = "../fixtures/config/app.config"
@@ -57,4 +57,21 @@ func TestAdminPostsEdit(t *testing.T) {
 
 	expect(t, err, nil)
 	expect(t, recorder.Code, 200)
+}
+
+func TestAdminPostsEdit_fileNoExists(t *testing.T) {
+	recorder := httptest.NewRecorder()
+	m := martini.Classic()
+	util.ConfigPath = "../fixtures/config/app.config"
+	m.Use(render.Renderer(render.Options{
+		Directory: "../fixtures/templates",
+		Layout:    "admin/layout",
+	}))
+	m.Get("/admin/posts/edit/**", Admin{}.Posts.Edit)
+
+	r, err := http.NewRequest("GET", "/admin/posts/edit/2014-04-16-non-existing-file.md", nil)
+	m.ServeHTTP(recorder, r)
+
+	expect(t, err, nil)
+	expect(t, recorder.Code, 404)
 }
