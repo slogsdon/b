@@ -95,3 +95,29 @@ func TestApiPostsCreate_badPastValues(t *testing.T) {
 
 	refute(t, err, nil)
 }
+
+func TestApiPostsShow_fileExists(t *testing.T) {
+	recorder := httptest.NewRecorder()
+	m := martini.Classic()
+	m.Use(render.Renderer())
+	m.Get("/api/posts/**", Api{}.Posts.Show)
+
+	r, err := http.NewRequest("GET", "/api/posts/2014-04-16-test-post-1.md", nil)
+	m.ServeHTTP(recorder, r)
+
+	expect(t, err, nil)
+	expect(t, recorder.Code, 200)
+}
+
+func TestApiPostsShow_fileNotExists(t *testing.T) {
+	recorder := httptest.NewRecorder()
+	m := martini.Classic()
+	m.Use(render.Renderer())
+	m.Get("/api/posts/**", Api{}.Posts.Show)
+
+	r, err := http.NewRequest("GET", "/api/posts/2014-04-16-does-not-exists.md", nil)
+	m.ServeHTTP(recorder, r)
+
+	expect(t, err, nil)
+	expect(t, recorder.Code, 404)
+}

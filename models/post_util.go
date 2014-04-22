@@ -6,6 +6,7 @@ import (
 	"gopkg.in/yaml.v1"
 	"html/template"
 	"io/ioutil"
+	"os"
 	"strings"
 	"time"
 )
@@ -15,14 +16,14 @@ func SavePost(root string, form map[string][]string) error {
 	filename := form["filename"][0]
 	raw := form["raw"][0]
 	hm, _ := ParsePostContent([]byte(raw), "md")
-	categories := strings.Join(hm.Categories, "/") + "/"
+	categories := strings.Join(hm.Categories, string(os.PathSeparator)) + string(os.PathSeparator)
 
-	err := util.MakeDir(root + "/" + categories)
+	err := util.MakeDir(root + string(os.PathSeparator) + categories)
 	if err != nil {
 		return err
 	}
 
-	fullpath := root + "/" + categories + filename
+	fullpath := root + string(os.PathSeparator) + categories + filename
 	return util.WriteFile(fullpath, raw)
 }
 
@@ -93,7 +94,7 @@ func preparePost(f util.FileReading) Post {
 		Content:     formattedContents,
 		HeadMatter:  head,
 		Filename:    f.Info.Name(),
-		Directory:   strings.Replace(f.Filename, "/"+f.Info.Name(), "", 1),
+		Directory:   strings.Replace(f.Filename, string(os.PathSeparator)+f.Info.Name(), "", 1),
 		Type:        t,
 		Raw:         string(contents),
 		UpdatedAt:   f.Info.ModTime(),

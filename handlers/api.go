@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"github.com/slogsdon/b/models"
 	"github.com/slogsdon/b/util"
 	"net/http"
+	"os"
 )
 
 type Api struct {
@@ -44,5 +46,27 @@ func (ap ApiPosts) Create(r render.Render, req *http.Request) {
 		r.Data(204, []byte("Created"))
 	} else {
 		r.Data(500, []byte(err.Error()))
+	}
+}
+
+// Show returns a single post.
+func (ap ApiPosts) Show(params martini.Params, r render.Render) {
+	var post models.Post
+
+	root := util.Config().App.PostsDir
+	file := root + string(os.PathSeparator) + params["_1"]
+	found := false
+
+	for _, p := range models.GetAllPosts(root) {
+		if p.Directory+string(os.PathSeparator)+p.Filename == file {
+			post = p
+			found = true
+		}
+	}
+
+	if found {
+		r.JSON(200, post)
+	} else {
+		r.Error(404)
 	}
 }

@@ -46,6 +46,7 @@ func Start() {
 		r.Get("", a.Index)
 		r.Get("/posts", a.Posts.Index)
 		r.Post("/posts", a.Posts.Create)
+		r.Get("/posts/**", a.Posts.Show)
 	})
 
 	// Serve from static if possible
