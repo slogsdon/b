@@ -5,6 +5,7 @@ import (
 	"gopkg.in/yaml.v1"
 	"html/template"
 	"io/ioutil"
+	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -31,26 +32,43 @@ func ParsePostId(id string) string {
 }
 
 // SavePost writes a new file or a file's new contents to storage.
-func SavePost(root string, form map[string][]string) error {
+func SavePost(root string, p interface{}) error {
 	var (
-		filename string
-		raw      string
+		categories string
+		filename   string
+		raw        string
 	)
-	if _, ok := form["filename"]; ok {
-		filename = form["filename"][0]
+
+	switch p.(type) {
+	case Post:
+		//json
+		post := Post(p.(Post))
+		filename = post.Filename
+		categories = strings.Join(post.HeadMatter.Categories, string(os.PathSeparator))
+		raw = post.Raw
+	default:
+		// x-www-form-urlencoded
+		form := url.Values(p.(url.Values))
+		if _, ok := form["filename"]; ok {
+			filename = form["filename"][0]
+		}
+		if _, ok := form["raw"]; ok {
+			raw = form["raw"][0]
+		}
+		hm, _ := ParsePostHeadMatter([]byte(raw))
+		categories = strings.Join(hm.Categories, string(os.PathSeparator))
 	}
-	if _, ok := form["raw"]; ok {
-		raw = form["raw"][0]
-	}
-	hm, _ := ParsePostHeadMatter([]byte(raw))
-	categories := strings.Join(hm.Categories, string(os.PathSeparator)) + string(os.PathSeparator)
+
+	categories += string(os.PathSeparator)
 
 	err := util.MakeDir(root + string(os.PathSeparator) + categories)
+
 	if err != nil {
 		return err
 	}
 
 	fullpath := root + string(os.PathSeparator) + categories + filename
+
 	return util.WriteFile(fullpath, raw)
 }
 

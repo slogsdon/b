@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"encoding/json"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"github.com/slogsdon/b/models"
 	"github.com/slogsdon/b/util"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type Api struct {
@@ -32,14 +34,35 @@ func (ap ApiPosts) Index(r render.Render) {
 // Create allows for the creation of new posts. It returns a 204
 // response on creation or a 500 response on error.
 func (ap ApiPosts) Create(r render.Render, req *http.Request) {
+	var (
+		post models.Post
+		err  error
+		t    = "urlencoded"
+		p    interface{}
+	)
 	root := util.Config().App.PostsDir
+	contentType := req.Header.Get("content-type")
 
-	if err := req.ParseForm(); err != nil {
+	if strings.Contains(contentType, "application/json") {
+		t = "json"
+	}
+
+	switch t {
+	case "json":
+		dec := json.NewDecoder(req.Body)
+		err = dec.Decode(&post)
+		p = post
+	default:
+		err = req.ParseForm()
+		p = req.Form
+	}
+
+	if err != nil {
 		r.Data(500, []byte(err.Error()))
 		return
 	}
 
-	if err := models.SavePost(root, req.Form); err == nil {
+	if err = models.SavePost(root, p); err == nil {
 		r.Data(204, []byte("Created"))
 	} else {
 		r.Data(500, []byte(err.Error()))

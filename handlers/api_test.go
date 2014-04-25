@@ -35,7 +35,31 @@ func TestApiPostsIndex(t *testing.T) {
 	expect(t, recorder.Code, 200)
 }
 
-func TestApiPostsCreate_goodRequest(t *testing.T) {
+func TestApiPostsCreate_goodRequestJson(t *testing.T) {
+	recorder := httptest.NewRecorder()
+	m := martini.Classic()
+	m.Use(render.Renderer())
+	m.Post("/api/posts", Api{}.Posts.Create)
+	buf := bytes.NewBufferString(`{"filename":"2014-04-16-test-post-3.md","raw":"---\ntitle: Test Post 1\ndate: 2014-04-16 22:00:00\ncategories: [test]\n---\n\nThis is a test post.\n\n## Test Posts\n\nPosting."}`)
+
+	r, err := http.NewRequest("POST", "/api/posts", buf)
+	r.Header.Set("Content-Type", "application/json; charset=utf-8")
+	m.ServeHTTP(recorder, r)
+
+	expect(t, err, nil)
+	expect(t, recorder.Code, 204)
+
+	file, err := os.Stat("../fixtures/posts/test/2014-04-16-test-post-3.md")
+
+	expect(t, err, nil)
+	if file != nil {
+		expect(t, file.Name(), "2014-04-16-test-post-3.md")
+		os.Remove("../fixtures/posts/test/2014-04-16-test-post-3.md")
+	}
+	os.Remove("../fixtures/posts/test")
+}
+
+func TestApiPostsCreate_goodRequestUrlEncoded(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	m := martini.Classic()
 	m.Use(render.Renderer())

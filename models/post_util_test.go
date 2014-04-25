@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/slogsdon/b/util"
 	"io/ioutil"
+	"net/url"
 	"testing"
 )
 
@@ -30,16 +31,22 @@ func TestParsePostId_multipleCategories(t *testing.T) {
 	expect(t, path, "test/category/2014-04-16-test-post-1.md")
 }
 
-func TestSavePost_properResponse(t *testing.T) {
+func TestSavePost_properResponsePostStruct(t *testing.T) {
 	root := "../fixtures/posts"
-	form := map[string][]string{
-		"filename": {
-			"2014-04-16-test-post-3.md",
-		},
-		"raw": {
-			"---\ntitle: Test Post 1\ndate: 2014-04-16 22:00:00\ncategories: [test]\n---\n\nThis is a test post.\n\n## Test Posts\n\nPosting.",
-		},
-	}
+	post := Post{}
+	post.Filename = "2014-04-16-test-post-3.md"
+	post.Raw = "---\ntitle: Test Post 1\ndate: 2014-04-16 22:00:00\ncategories: [test]\n---\n\nThis is a test post.\n\n## Test Posts\n\nPosting."
+
+	err := SavePost(root, post)
+
+	expect(t, err, nil)
+}
+
+func TestSavePost_properResponseUrlValues(t *testing.T) {
+	root := "../fixtures/posts"
+	form := url.Values{}
+	form.Add("filename", "2014-04-16-test-post-3.md")
+	form.Add("raw", "---\ntitle: Test Post 1\ndate: 2014-04-16 22:00:00\ncategories: [test]\n---\n\nThis is a test post.\n\n## Test Posts\n\nPosting.")
 
 	err := SavePost(root, form)
 
@@ -48,14 +55,9 @@ func TestSavePost_properResponse(t *testing.T) {
 
 func TestSavePost_badTargetDir(t *testing.T) {
 	root := "/etc/not-getting/here"
-	form := map[string][]string{
-		"filename": {
-			"2014-04-16-not-going-to-happen.md",
-		},
-		"raw": {
-			"testing.",
-		},
-	}
+	form := url.Values{}
+	form.Add("filename", "2014-04-16-not-going-to-happen.md")
+	form.Add("raw", "testing.")
 
 	err := SavePost(root, form)
 
