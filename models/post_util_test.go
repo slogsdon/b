@@ -6,6 +6,30 @@ import (
 	"testing"
 )
 
+func TestParsePostId_noCategories(t *testing.T) {
+	path := ParsePostId("2014-04-16-test-post-1.md")
+
+	expect(t, path, "2014-04-16-test-post-1.md")
+}
+
+func TestParsePostId_emptyCategory(t *testing.T) {
+	path := ParsePostId("_2014-04-16-test-post-1.md")
+
+	expect(t, path, "2014-04-16-test-post-1.md")
+}
+
+func TestParsePostId_oneCategory(t *testing.T) {
+	path := ParsePostId("test_2014-04-16-test-post-1.md")
+
+	expect(t, path, "test/2014-04-16-test-post-1.md")
+}
+
+func TestParsePostId_multipleCategories(t *testing.T) {
+	path := ParsePostId("test-category_2014-04-16-test-post-1.md")
+
+	expect(t, path, "test/category/2014-04-16-test-post-1.md")
+}
+
 func TestSavePost_properResponse(t *testing.T) {
 	root := "../fixtures/posts"
 	form := map[string][]string{
@@ -48,7 +72,7 @@ func TestParsePostSlugAndType(t *testing.T) {
 	expect(t, ty, "md")
 }
 
-func TestPostParseContent(t *testing.T) {
+func TestParsePostHeadMatter(t *testing.T) {
 	files := util.ReadDir("../fixtures/posts")
 	file := files[0]
 
@@ -57,8 +81,7 @@ func TestPostParseContent(t *testing.T) {
 		t.Errorf("Error reading file '%v'", file.Filename)
 	}
 
-	_, ty := ParsePostSlugAndType(file.Info.Name())
-	hm, _ := ParsePostContent(contents, ty)
+	hm, _ := ParsePostHeadMatter(contents)
 
 	expect(t, hm.Title, "Test Post 1")
 	expect(t, hm.Date, "2014-04-16 22:00:00")

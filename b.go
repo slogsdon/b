@@ -35,7 +35,7 @@ func Start() {
 		r.Get("", a.Index)
 		r.Get("/posts", a.Posts.Index)
 		r.Get("/posts/new", a.Posts.New)
-		r.Get("/posts/edit/**", a.Posts.Edit)
+		r.Get("/posts/:id/edit", a.Posts.Edit)
 
 	}, render.Renderer(render.Options{
 		Layout: "admin/layout",
@@ -47,7 +47,7 @@ func Start() {
 		r.Get("", a.Index)
 		r.Get("/posts", a.Posts.Index)
 		r.Post("/posts", a.Posts.Create)
-		r.Get("/posts/**", a.Posts.Show)
+		r.Get("/posts/:id", a.Posts.Show)
 		r.Get("/render/markdown", a.Render.Markdown)
 	})
 

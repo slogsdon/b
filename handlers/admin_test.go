@@ -67,9 +67,9 @@ func TestAdminPostsEdit_fileExists(t *testing.T) {
 		Directory: "../fixtures/templates",
 		Layout:    "admin/layout",
 	}))
-	m.Get("/admin/posts/edit/**", Admin{}.Posts.Edit)
+	m.Get("/admin/posts/:id/edit", Admin{}.Posts.Edit)
 
-	r, err := http.NewRequest("GET", "/admin/posts/edit/2014-04-16-test-post-1.md", nil)
+	r, err := http.NewRequest("GET", "/admin/posts/2014-04-16-test-post-1.md/edit", nil)
 	m.ServeHTTP(recorder, r)
 
 	expect(t, err, nil)
@@ -84,9 +84,9 @@ func TestAdminPostsEdit_fileNoExists(t *testing.T) {
 		Directory: "../fixtures/templates",
 		Layout:    "admin/layout",
 	}))
-	m.Get("/admin/posts/edit/**", Admin{}.Posts.Edit)
+	m.Get("/admin/posts/:id/edit", Admin{}.Posts.Edit)
 
-	r, err := http.NewRequest("GET", "/admin/posts/edit/2014-04-16-non-existing-file.md", nil)
+	r, err := http.NewRequest("GET", "/admin/posts/2014-04-16-non-existing-file.md/edit", nil)
 	m.ServeHTTP(recorder, r)
 
 	expect(t, err, nil)

@@ -100,7 +100,7 @@ func TestApiPostsShow_fileExists(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	m := martini.Classic()
 	m.Use(render.Renderer())
-	m.Get("/api/posts/**", Api{}.Posts.Show)
+	m.Get("/api/posts/:id", Api{}.Posts.Show)
 
 	r, err := http.NewRequest("GET", "/api/posts/2014-04-16-test-post-1.md", nil)
 	m.ServeHTTP(recorder, r)
@@ -113,7 +113,7 @@ func TestApiPostsShow_fileNotExists(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	m := martini.Classic()
 	m.Use(render.Renderer())
-	m.Get("/api/posts/**", Api{}.Posts.Show)
+	m.Get("/api/posts/:id", Api{}.Posts.Show)
 
 	r, err := http.NewRequest("GET", "/api/posts/2014-04-16-does-not-exists.md", nil)
 	m.ServeHTTP(recorder, r)

@@ -10,6 +10,26 @@ import (
 	"time"
 )
 
+// ParsePostId parses a file path from an url parameter.
+func ParsePostId(id string) string {
+	split := strings.Split(id, "_")
+	path := split[0]
+
+	if len(split) == 1 {
+		return path
+	}
+
+	if path == "" {
+		return strings.Join(split[1:], "_")
+	}
+
+	if strings.Contains(path, "-") {
+		path = strings.Join(strings.Split(path, "-"), "/")
+	}
+
+	return path + "/" + strings.Join(split[1:], "_")
+}
+
 // SavePost writes a new file or a file's new contents to storage.
 func SavePost(root string, form map[string][]string) error {
 	var (
@@ -22,7 +42,7 @@ func SavePost(root string, form map[string][]string) error {
 	if _, ok := form["raw"]; ok {
 		raw = form["raw"][0]
 	}
-	hm, _ := ParsePostContent([]byte(raw), "md")
+	hm, _ := ParsePostHeadMatter([]byte(raw))
 	categories := strings.Join(hm.Categories, string(os.PathSeparator)) + string(os.PathSeparator)
 
 	err := util.MakeDir(root + string(os.PathSeparator) + categories)
@@ -60,15 +80,15 @@ func GetPost(name, root string) Post {
 }
 
 // ParsePostContent parses the HeadMatter and HTML from a raw post.
-func ParsePostContent(contents []byte, t string) (HeadMatter, template.HTML) {
-	m, c := parseHeadMatter(contents)
+func ParsePostContent(contents []byte, t string) template.HTML {
+	var c []byte
 
 	switch t {
 	case "md", "mdown", "markdown":
-		c = util.Markdown(c)
+		c = util.Markdown(contents)
 	}
 
-	return m, template.HTML(string(c))
+	return template.HTML(string(c))
 }
 
 // ParsePostSlugAndType parses a post's slug and type from
@@ -93,17 +113,19 @@ func preparePost(f util.FileReading) Post {
 
 	// Parse our content/head matter from our file
 	// Return our prepared Post
-	head, formattedContents := ParsePostContent(contents, t)
+	head, contentsNoHead := ParsePostHeadMatter(contents)
+	formattedContents := ParsePostContent(contentsNoHead, t)
 	time, _ := time.Parse("2006-01-02 15:04:05", head.Date)
 	return Post{
-		Title:       head.Title,
-		Slug:        slug,
-		Content:     formattedContents,
-		HeadMatter:  head,
-		Filename:    f.Info.Name(),
-		Directory:   strings.Replace(f.Filename, string(os.PathSeparator)+f.Info.Name(), "", 1),
-		Type:        t,
-		Raw:         string(contents),
+		Title:      head.Title,
+		Slug:       slug,
+		Content:    formattedContents,
+		HeadMatter: head,
+		Filename:   f.Info.Name(),
+		Directory:  strings.Replace(f.Filename, string(os.PathSeparator)+f.Info.Name(), "", 1),
+		Type:       t,
+		Raw:        string(contentsNoHead),
+		// CreatedAt:   f.Info.Sys().Ctim,
 		UpdatedAt:   f.Info.ModTime(),
 		PublishedAt: time,
 	}
@@ -118,14 +140,14 @@ type HeadMatter struct {
 	Categories []string `json:"categories"`
 }
 
-func parseHeadMatter(contents []byte) (HeadMatter, []byte) {
+func ParsePostHeadMatter(contents []byte) (HeadMatter, []byte) {
 	m := HeadMatter{}
 	c := string(contents)
 
 	if strings.Count(c, "---") >= 2 {
 		split := strings.Split(c, "---")
 		_ = yaml.Unmarshal([]byte(split[1]), &m)
-		c = strings.Join(split[2:], "---")
+		c = strings.Trim(strings.Join(split[2:], "---"), "\r\n")
 	}
 
 	return m, []byte(c)

@@ -34,7 +34,8 @@ func (ap AdminPosts) Edit(params martini.Params, r render.Render) {
 	var post models.Post
 
 	root := util.Config().App.PostsDir
-	file := root + string(os.PathSeparator) + params["_1"]
+	path := models.ParsePostId(params["id"])
+	file := root + string(os.PathSeparator) + path
 	found := false
 
 	for _, p := range models.GetAllPosts(root) {
