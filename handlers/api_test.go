@@ -40,7 +40,7 @@ func TestApiPostsCreate_goodRequestJson(t *testing.T) {
 	m := martini.Classic()
 	m.Use(render.Renderer())
 	m.Post("/api/posts", Api{}.Posts.Create)
-	buf := bytes.NewBufferString(`{"filename":"2014-04-16-test-post-3.md","raw":"---\ntitle: Test Post 1\ndate: 2014-04-16 22:00:00\ncategories: [test]\n---\n\nThis is a test post.\n\n## Test Posts\n\nPosting."}`)
+	buf := bytes.NewBufferString(`{"filename":"2014-04-16-test-post-3.md","raw":"This is a test post.\n\n## Test Posts\n\nPosting.", "head_matter":{"title": "Test Post 1","date": "2014-04-16 22:00:00","categories": ["test"]}}`)
 
 	r, err := http.NewRequest("POST", "/api/posts", buf)
 	r.Header.Set("Content-Type", "application/json; charset=utf-8")
@@ -64,7 +64,7 @@ func TestApiPostsCreate_goodRequestUrlEncoded(t *testing.T) {
 	m := martini.Classic()
 	m.Use(render.Renderer())
 	m.Post("/api/posts", Api{}.Posts.Create)
-	buf := bytes.NewBufferString("filename=2014-04-16-test-post-3.md&raw=---\ntitle: Test Post 1\ndate: 2014-04-16 22:00:00\ncategories: [test]\n---\n\nThis is a test post.\n\n## Test Posts\n\nPosting.")
+	buf := bytes.NewBufferString("filename=2014-04-16-test-post-3.md&title=Test Post 1&date=2014-04-16 22:00:00&categories=test&raw=This is a test post.\n\n## Test Posts\n\nPosting.")
 
 	r, err := http.NewRequest("POST", "/api/posts", buf)
 	r.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")

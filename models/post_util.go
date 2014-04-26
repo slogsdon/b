@@ -37,6 +37,7 @@ func SavePost(root string, p interface{}) error {
 		categories string
 		filename   string
 		raw        string
+		hm         string
 	)
 
 	switch p.(type) {
@@ -46,7 +47,13 @@ func SavePost(root string, p interface{}) error {
 		filename = post.Filename
 		categories = strings.Join(post.HeadMatter.Categories, string(os.PathSeparator))
 		raw = post.Raw
+		hm = FormatPostHeadMatter(post.HeadMatter)
 	default:
+		var (
+			title string
+			date  string
+			c     []string
+		)
 		// x-www-form-urlencoded
 		form := url.Values(p.(url.Values))
 		if _, ok := form["filename"]; ok {
@@ -55,11 +62,25 @@ func SavePost(root string, p interface{}) error {
 		if _, ok := form["raw"]; ok {
 			raw = form["raw"][0]
 		}
-		hm, _ := ParsePostHeadMatter([]byte(raw))
-		categories = strings.Join(hm.Categories, string(os.PathSeparator))
+		if _, ok := form["title"]; ok {
+			title = form["title"][0]
+		}
+		if _, ok := form["date"]; ok {
+			date = form["date"][0]
+		}
+		if _, ok := form["categories"]; ok {
+			c = form["categories"]
+		}
+		hm = FormatPostHeadMatter(HeadMatter{
+			Title:      title,
+			Date:       date,
+			Categories: c,
+		})
+		categories = strings.Join(c, string(os.PathSeparator))
 	}
 
 	categories += string(os.PathSeparator)
+	raw = hm + raw
 
 	err := util.MakeDir(root + string(os.PathSeparator) + categories)
 
@@ -153,9 +174,18 @@ func preparePost(f util.FileReading) Post {
 // head matter section of a post, fenced with leading
 // and following --- lines.
 type HeadMatter struct {
-	Title      string   `json:"title"`
-	Date       string   `json:"date"`
-	Categories []string `json:"categories"`
+	Title      string   `json:"title",yaml:"title,omitempty"`
+	Date       string   `json:"date",yaml:"date,omitempty"`
+	Categories []string `json:"categories",yaml:"categories,omitempty"`
+}
+
+func FormatPostHeadMatter(hm HeadMatter) string {
+	var r string
+	b, _ := yaml.Marshal(hm)
+	if len(b) > 0 {
+		r = "---\n" + string(b) + "---\n\n"
+	}
+	return r
 }
 
 func ParsePostHeadMatter(contents []byte) (HeadMatter, []byte) {

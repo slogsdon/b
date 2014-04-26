@@ -35,7 +35,12 @@ func TestSavePost_properResponsePostStruct(t *testing.T) {
 	root := "../fixtures/posts"
 	post := Post{}
 	post.Filename = "2014-04-16-test-post-3.md"
-	post.Raw = "---\ntitle: Test Post 1\ndate: 2014-04-16 22:00:00\ncategories: [test]\n---\n\nThis is a test post.\n\n## Test Posts\n\nPosting."
+	post.HeadMatter = HeadMatter{
+		Title:      "Test Post 1",
+		Date:       "2014-04-16 22:00:00",
+		Categories: []string{"test"},
+	}
+	post.Raw = "This is a test post.\n\n## Test Posts\n\nPosting."
 
 	err := SavePost(root, post)
 
@@ -46,7 +51,10 @@ func TestSavePost_properResponseUrlValues(t *testing.T) {
 	root := "../fixtures/posts"
 	form := url.Values{}
 	form.Add("filename", "2014-04-16-test-post-3.md")
-	form.Add("raw", "---\ntitle: Test Post 1\ndate: 2014-04-16 22:00:00\ncategories: [test]\n---\n\nThis is a test post.\n\n## Test Posts\n\nPosting.")
+	form.Add("title", "Test Post 1")
+	form.Add("date", "2014-04-16 22:00:00")
+	form.Add("categories", "test")
+	form.Add("raw", "This is a test post.\n\n## Test Posts\n\nPosting.")
 
 	err := SavePost(root, form)
 
