@@ -50,9 +50,11 @@ func SavePost(root string, p interface{}) error {
 		hm = FormatPostHeadMatter(post.HeadMatter)
 	default:
 		var (
-			title string
-			date  string
-			c     []string
+			title            string
+			date             string
+			c                []string
+			meta_description string
+			feature_image    string
 		)
 		// x-www-form-urlencoded
 		form := url.Values(p.(url.Values))
@@ -71,10 +73,18 @@ func SavePost(root string, p interface{}) error {
 		if _, ok := form["categories"]; ok {
 			c = form["categories"]
 		}
+		if _, ok := form["meta_description"]; ok {
+			meta_description = form["meta_description"][0]
+		}
+		if _, ok := form["feature_image"]; ok {
+			feature_image = form["feature_image"][0]
+		}
 		hm = FormatPostHeadMatter(HeadMatter{
-			Title:      title,
-			Date:       date,
-			Categories: c,
+			Title:           title,
+			Date:            date,
+			Categories:      c,
+			MetaDescription: meta_description,
+			FeatureImage:    feature_image,
 		})
 		categories = strings.Join(c, string(os.PathSeparator))
 	}
@@ -174,9 +184,11 @@ func preparePost(f util.FileReading) Post {
 // head matter section of a post, fenced with leading
 // and following --- lines.
 type HeadMatter struct {
-	Title      string   `json:"title",yaml:"title,omitempty"`
-	Date       string   `json:"date",yaml:"date,omitempty"`
-	Categories []string `json:"categories",yaml:"categories,omitempty"`
+	Title           string   `json:"title",yaml:"title,omitempty"`
+	Date            string   `json:"date",yaml:"date,omitempty"`
+	Categories      []string `json:"categories",yaml:"categories,omitempty"`
+	MetaDescription string   `json:"meta_description",yaml:"meta_description,omitempty"`
+	FeatureImage    string   `json:"feature_image",yaml:"feature_image,omitempty"`
 }
 
 func FormatPostHeadMatter(hm HeadMatter) string {
