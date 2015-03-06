@@ -5,11 +5,10 @@
 package b
 
 import (
-	"github.com/go-martini/martini"
-	// "github.com/martini-contrib/gzip"
-	"github.com/martini-contrib/render"
+	"net/http"
+
+	"github.com/julienschmidt/httprouter"
 	"github.com/slogsdon/b/handlers"
-	"github.com/slogsdon/b/util"
 )
 
 const (
@@ -17,41 +16,54 @@ const (
 	VERSION = "0.0.1"
 )
 
+var (
+	defaultOptions = Options{
+		Port: "3000",
+	}
+	static = http.FileServer(http.Dir("./_site"))
+)
+
 // Entry point for running the application.
 // It defines all routes and middleware used
 // and starts the underlying server.
-func Start() {
-	// Set up our Martini instance
-	m := martini.Classic()
+func Start(args ...interface{}) {
+	opts := getOptions(args)
+	m := httprouter.New()
 
-	// Middleware
-	// m.Use(gzip.All())
-	m.Use(render.Renderer())
+	admin := handlers.Admin{}
+	m.Handler("GET", "/admin/posts/new", wrap(admin.Posts.New))
+	m.Handler("GET", "/admin/posts/edit/:id", wrap(admin.Posts.Edit))
+	m.Handler("GET", "/admin/posts", wrap(admin.Posts.Index))
+	m.Handler("GET", "/admin", wrap(admin.Index))
 
-	// Routes
-	m.Group("/admin", func(r martini.Router) {
-		a := handlers.Admin{}
+	api := handlers.Api{}
+	m.Handler("GET", "/api/render/markdown", wrap(api.Render.Markdown))
+	m.Handler("GET", "/api/posts/:id", wrap(api.Posts.Show))
+	m.Handler("GET", "/api/posts", wrap(api.Posts.Index))
+	m.Handler("POST", "/api/posts", wrap(api.Posts.Create))
+	m.Handler("GET", "/api", wrap(api.Index))
 
-		r.Get("", a.Index)
-		r.Get("/posts", a.Posts.Index)
-		r.Get("/posts/new", a.Posts.New)
-		r.Get("/posts/:id/edit", a.Posts.Edit)
+	m.Handler("GET", "/", static)
 
-	}, render.Renderer(render.Options{
-		Layout: "admin/layout",
-	}))
+	http.Handle("/", m)
+	http.ListenAndServe(opts.Hostname+":"+opts.Port, nil)
+}
 
-	m.Group("/api", func(r martini.Router) {
-		a := handlers.Api{}
+func getOptions(args []interface{}) Options {
+	options := args[0]
+	switch options := options.(type) {
+	case Options:
+		return options
+	default:
+		return defaultOptions
+	}
+}
 
-		r.Get("", a.Index)
-		r.Get("/posts", a.Posts.Index)
-		r.Post("/posts", a.Posts.Create)
-		r.Get("/posts/:id", a.Posts.Show)
-		r.Get("/render/markdown", a.Render.Markdown)
-	})
+func wrap(h http.HandlerFunc) http.Handler {
+	return http.HandlerFunc(h)
+}
 
-	// Serve from static if possible
-	m.Use(martini.Static(util.Config().App.SiteDir))
-	m.Run()
+type Options struct {
+	Hostname string
+	Port     string
 }
