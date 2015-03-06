@@ -4,6 +4,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"syscall"
+
 	"github.com/slogsdon/b"
 	"github.com/slogsdon/b/util"
 )
@@ -38,7 +40,14 @@ func main() {
 	case "help":
 		showHelp()
 	case "serve":
-		b.Start()
+		port, ok := syscall.Getenv("PORT")
+		if !ok {
+			port = "3000"
+		}
+		options := b.Options{
+			Port: port,
+		}
+		b.Start(options)
 	case "version":
 		fmt.Println("b version", b.VERSION)
 	default:
