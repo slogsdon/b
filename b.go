@@ -9,6 +9,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/slogsdon/b/handlers"
+	"github.com/slogsdon/b/util"
 )
 
 const (
@@ -28,24 +29,24 @@ var (
 // and starts the underlying server.
 func Start(args ...interface{}) {
 	opts := getOptions(args)
-	m := httprouter.New()
+	util.Mux = httprouter.New()
 
 	admin := handlers.Admin{}
-	m.Handler("GET", "/admin/posts/new", wrap(admin.Posts.New))
-	m.Handler("GET", "/admin/posts/edit/:id", wrap(admin.Posts.Edit))
-	m.Handler("GET", "/admin/posts", wrap(admin.Posts.Index))
-	m.Handler("GET", "/admin", wrap(admin.Index))
+	util.Mux.Handler("GET", "/admin", wrap(admin.Index))
+	util.Mux.Handler("GET", "/admin/posts", wrap(admin.Posts.Index))
+	util.Mux.Handler("GET", "/admin/posts/new", wrap(admin.Posts.New))
+	util.Mux.Handler("GET", "/admin/posts/edit/*id", wrap(admin.Posts.Edit))
 
 	api := handlers.Api{}
-	m.Handler("GET", "/api/render/markdown", wrap(api.Render.Markdown))
-	m.Handler("GET", "/api/posts/:id", wrap(api.Posts.Show))
-	m.Handler("GET", "/api/posts", wrap(api.Posts.Index))
-	m.Handler("POST", "/api/posts", wrap(api.Posts.Create))
-	m.Handler("GET", "/api", wrap(api.Index))
+	util.Mux.Handler("GET", "/api", wrap(api.Index))
+	util.Mux.Handler("GET", "/api/posts", wrap(api.Posts.Index))
+	util.Mux.Handler("POST", "/api/posts", wrap(api.Posts.Create))
+	util.Mux.Handler("GET", "/api/posts/*id", wrap(api.Posts.Show))
+	util.Mux.Handler("GET", "/api/render/markdown", wrap(api.Render.Markdown))
 
-	m.Handler("GET", "/", static)
+	util.Mux.Handler("GET", "/", static)
 
-	http.Handle("/", m)
+	http.Handle("/", util.Mux)
 	http.ListenAndServe(opts.Hostname+":"+opts.Port, nil)
 }
 
