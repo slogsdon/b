@@ -1,10 +1,11 @@
 package models
 
 import (
-	"github.com/slogsdon/b/util"
 	"io/ioutil"
 	"net/url"
 	"testing"
+
+	"github.com/slogsdon/b/util"
 )
 
 func TestParsePostId_noCategories(t *testing.T) {
@@ -73,7 +74,11 @@ func TestSavePost_badTargetDir(t *testing.T) {
 }
 
 func TestParsePostSlugAndType(t *testing.T) {
-	files := util.ReadDir("../fixtures/posts")
+	file_chan := util.ReadDir("../fixtures/posts")
+	files := []util.FileReading{}
+	for f := range file_chan {
+		files = append(files, f)
+	}
 	file := files[0]
 
 	slug, ty := ParsePostSlugAndType(file.Info.Name())
@@ -83,7 +88,11 @@ func TestParsePostSlugAndType(t *testing.T) {
 }
 
 func TestParsePostHeadMatter(t *testing.T) {
-	files := util.ReadDir("../fixtures/posts")
+	file_chan := util.ReadDir("../fixtures/posts")
+	files := []util.FileReading{}
+	for f := range file_chan {
+		files = append(files, f)
+	}
 	file := files[0]
 
 	contents, err := ioutil.ReadFile(file.Filename)

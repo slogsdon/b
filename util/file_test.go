@@ -29,7 +29,11 @@ func BenchmarkMakeDir(b *testing.B) {
 }
 
 func TestReadDir(t *testing.T) {
-	files := ReadDir("../fixtures/posts")
+	file_chan := ReadDir("../fixtures/posts")
+	files := []FileReading{}
+	for f := range file_chan {
+		files = append(files, f)
+	}
 
 	expect(t, len(files) > 0, true)
 	expect(t, files[0].Info.Name(), "2014-04-16-test-post-1.md")
