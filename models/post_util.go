@@ -1,14 +1,15 @@
 package models
 
 import (
-	"github.com/slogsdon/b/util"
-	"gopkg.in/yaml.v1"
 	"html/template"
 	"io/ioutil"
 	"net/url"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/slogsdon/b/util"
+	"gopkg.in/yaml.v1"
 )
 
 // ParsePostId parses a file path from an url parameter.
@@ -40,14 +41,13 @@ func SavePost(root string, p interface{}) error {
 		hm         string
 	)
 
-	switch p.(type) {
+	switch p := p.(type) {
 	case Post:
 		//json
-		post := Post(p.(Post))
-		filename = post.Filename
-		categories = strings.Join(post.HeadMatter.Categories, string(os.PathSeparator))
-		raw = post.Raw
-		hm = FormatPostHeadMatter(post.HeadMatter)
+		filename = p.Filename
+		categories = strings.Join(p.HeadMatter.Categories, string(os.PathSeparator))
+		raw = p.Raw
+		hm = FormatPostHeadMatter(p.HeadMatter)
 	default:
 		var (
 			title            string
@@ -92,13 +92,14 @@ func SavePost(root string, p interface{}) error {
 	categories += string(os.PathSeparator)
 	raw = hm + raw
 
-	err := util.MakeDir(root + string(os.PathSeparator) + categories)
+	dest := root + string(os.PathSeparator) + categories
+	err := util.MakeDir(dest)
 
 	if err != nil {
 		return err
 	}
 
-	fullpath := root + string(os.PathSeparator) + categories + filename
+	fullpath := dest + filename
 
 	return util.WriteFile(fullpath, raw)
 }

@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 
 	"github.com/slogsdon/b/models"
+	"github.com/slogsdon/b/render"
 	"github.com/slogsdon/b/util"
 )
 
@@ -16,19 +15,19 @@ type Admin struct {
 
 // Index returns the admin dashboard.
 func (a Admin) Index(rw http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(rw, "admin index")
+	render.HTML(rw, "admin/index")
 }
 
 type AdminPosts struct{}
 
 // Index lists all posts.
 func (a AdminPosts) Index(rw http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(rw, "admin posts index")
+	render.HTML(rw, "admin/posts/index")
 }
 
 // New allows for adding new posts.
 func (a AdminPosts) New(rw http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(rw, "admin new post")
+	render.HTML(rw, "admin/posts/new")
 }
 
 // Edit loads a post for editing.
@@ -48,12 +47,9 @@ func (a AdminPosts) Edit(rw http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var data []byte
 	if found {
-		data, _ = json.Marshal(post)
-		rw.Write(data)
+		render.HTML(rw, "admin/posts/edit", post)
 	} else {
 		rw.WriteHeader(404)
-		rw.Write(data)
 	}
 }

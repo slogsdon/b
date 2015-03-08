@@ -1,9 +1,10 @@
 package util
 
 import (
-	"github.com/BurntSushi/toml"
 	"io/ioutil"
 	"strings"
+
+	"github.com/BurntSushi/toml"
 )
 
 var (
