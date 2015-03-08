@@ -5,10 +5,8 @@ import (
 )
 
 // Markdown presents MarkdownCommon with a few minor changes
-func Markdown(str interface{}) []byte {
+func Markdown(str interface{}) (c []byte) {
 	// this did use blackfriday.MarkdownCommon, but it was stripping out <script>
-	var c []byte
-
 	htmlFlags := 0
 	htmlFlags |= blackfriday.HTML_USE_XHTML
 	htmlFlags |= blackfriday.HTML_USE_SMARTYPANTS
@@ -26,13 +24,13 @@ func Markdown(str interface{}) []byte {
 	extensions |= blackfriday.EXTENSION_SPACE_HEADERS
 	extensions |= blackfriday.EXTENSION_FOOTNOTES
 
-	switch str.(type) {
+	switch str := str.(type) {
 	default:
-		return c
+		return
 	case string:
-		c = []byte(str.(string))
+		c = []byte(str)
 	case []byte:
-		c = []byte(str.([]byte))
+		c = str
 	}
 
 	return blackfriday.Markdown(c, renderer, extensions)

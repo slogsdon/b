@@ -105,28 +105,24 @@ func SavePost(root string, p interface{}) error {
 }
 
 // GetAllPosts returns all posts from the storage system by name.
-func GetAllPosts(root string) []Post {
-	var posts []Post
-
-	for _, f := range util.ReadDir(root) {
+func GetAllPosts(root string) (posts []Post) {
+	for f := range util.ReadDir(root) {
 		posts = append(posts, preparePost(f))
 	}
 
-	return posts
+	return
 }
 
 // GetPost returns a single post from the storage system by name.
-func GetPost(name, root string) Post {
-	var post Post
-
-	for _, f := range util.ReadDir(root) {
+func GetPost(name, root string) (post Post) {
+	for f := range util.ReadDir(root) {
 		if f.Filename == name {
 			post = preparePost(f)
 			break
 		}
 	}
 
-	return post
+	return
 }
 
 // ParsePostContent parses the HeadMatter and HTML from a raw post.
@@ -192,13 +188,12 @@ type HeadMatter struct {
 	FeatureImage    string   `json:"feature_image",yaml:"feature_image,omitempty"`
 }
 
-func FormatPostHeadMatter(hm HeadMatter) string {
-	var r string
+func FormatPostHeadMatter(hm HeadMatter) (r string) {
 	b, _ := yaml.Marshal(hm)
 	if len(b) > 0 {
 		r = "---\n" + string(b) + "---\n\n"
 	}
-	return r
+	return
 }
 
 func ParsePostHeadMatter(contents []byte) (HeadMatter, []byte) {
