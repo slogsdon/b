@@ -1,24 +1,30 @@
-# b 
-[![GoDoc](https://godoc.org/github.com/slogsdon/b?status.png)](http://godoc.org/github.com/slogsdon/b) 
-[![Build Status](https://travis-ci.org/slogsdon/b.svg)](https://travis-ci.org/slogsdon/b) 
+# b
+[![GoDoc](https://godoc.org/github.com/slogsdon/b?status.png)](http://godoc.org/github.com/slogsdon/b)
+[![Build Status](https://travis-ci.org/slogsdon/b.svg)](https://travis-ci.org/slogsdon/b)
 [![Coverage Status](https://coveralls.io/repos/slogsdon/b/badge.png?branch=master)](https://coveralls.io/r/slogsdon/b?branch=master)
-[![Gobuild Download](http://gobuild.io/badge/github.com/slogsdon/b/download.png)](http://gobuild.io/github.com/slogsdon/b)
 
 A static-ish blog application. Can be run as a standalone application/server or be used to locally manage and deploy posts to a remote server.
 
 ## Building
 
-If you wish to build b you'll need Go version 1.2+ installed.
-
-Please check your installation with:
-
 ```
-go version
+$ cd $GOPATH/src/github.com/slogsdon/b
+$ go build -o b-serve cmd/b-serve/main.go
 ```
+
+> If you wish to build b you'll need Go version 1.2+ installed.
+>
+> Please check your installation with:
+>
+> ```
+> $ go version
+> ```
 
 ## Testing
 
-If you wish to run the tests, either run them using `go test ./...` in the project directory, or using the included `Guardfile`, run [`guard`](https://github.com/guard/guard) in the project directory to have the tests run automatically when `*.go` files are modified.
+```
+$ go test ./...
+```
 
 ## TODO
 
